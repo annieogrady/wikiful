@@ -5,8 +5,16 @@ class ApplicationController < ActionController::Base
   before_filter :get_categories
 
   private
+  def current_user
+    @current_user ||= User.find(session[:user_id]) if session[:user_id]
+  end
+  helper_method :current_user
+  
   def get_categories
     @categories = Category.all.order(:name)
   end
 
-end
+  def authorize
+    redirect_to login_url, alert: "Not authorized" if current_user.nil?
+  end
+  end
